@@ -9,7 +9,7 @@ const Transaction = require("./Transaction");
 const formatCreditCardNumber = require("./utils");
 
 const app = express();
-const PORT = process.env.PORT | 3000;
+const port = 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -129,11 +129,12 @@ app.get("/users/:username", async (req, res) => {
 			_id: user._id,
 			firstName: user.firstName,
 			lastName: user.lastName,
+			name: `${user.firstName} ${user.lastName}`,
 			address: user.address,
 			birthday: user.birthday.toLocaleDateString(),
 			username: user.username,
 			password: user.password,
-			creditCardNumber: user.creditCardNumber,
+			creditCardNumber: formatCreditCardNumber(user.creditCardNumber),
 			__v: user.__v,
 		};
 
@@ -208,6 +209,7 @@ app.get("/getCreditCardInfo/:username", async (req, res) => {
 		yearStr = user.expiryDate.getFullYear().toString();
 		const formattedExpiry =
 			user.expiryDate.getMonth() +
+			1 +
 			"/" +
 			yearStr.charAt(2) +
 			yearStr.charAt(3);
@@ -312,18 +314,20 @@ app.get("/transactions/:username", async (req, res) => {
 					title: "Outgoing",
 					name: t.receiverName,
 					amount: t.amount.toLocaleString(),
-					date: `${t.date.getFullYear()}/${
-						t.date.getMonth() + 1
-					}/${t.date.getDay()}`,
+					// date: `${t.date.getFullYear()}/${
+					// 	t.date.getMonth() + 1
+					// }/${t.date.getDay()}`,
+					date: t.date.toLocaleDateString(),
 				});
 			} else {
 				formattedTransactions.push({
 					title: "Incoming",
 					name: t.senderName,
 					amount: t.amount.toLocaleString(),
-					date: `${t.date.getFullYear()}/${
-						t.date.getMonth() + 1
-					}/${t.date.getDay()}`,
+					// date: `${t.date.getFullYear()}/${
+					// 	t.date.getMonth() + 1
+					// }/${t.date.getDay()}`,
+					date: t.date.toLocaleDateString(),
 				});
 			}
 		});
@@ -359,18 +363,20 @@ app.get("/transactions/latest/:username", async (req, res) => {
 					title: "Outgoing",
 					name: t.receiverName,
 					amount: t.amount.toLocaleString(),
-					date: `${t.date.getFullYear()}/${
-						t.date.getMonth() + 1
-					}/${t.date.getDay()}`,
+					// date: `${t.date.getFullYear()}/${
+					// 	t.date.getMonth() + 1
+					// }/${t.date.getDay()}`,
+					date: t.date.toLocaleDateString(),
 				});
 			} else {
 				formattedTransactions.push({
 					title: "Incoming",
 					name: t.senderName,
 					amount: t.amount.toLocaleString(),
-					date: `${t.date.getFullYear()}/${
-						t.date.getMonth() + 1
-					}/${t.date.getDay()}`,
+					// date: `${t.date.getFullYear()}/${
+					// 	t.date.getMonth() + 1
+					// }/${t.date.getDay()}`,
+					date: t.date.toLocaleDateString(),
 				});
 			}
 		});
@@ -383,6 +389,6 @@ app.get("/transactions/latest/:username", async (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, () => {
-	console.log(`Server is running on PORT ${PORT}`);
+app.listen(port, () => {
+	console.log(`Server is running on port ${port}`);
 });
